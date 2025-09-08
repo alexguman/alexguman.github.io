@@ -21,6 +21,9 @@
 --color-link: var(--color-text);
 --color-link-hover: #dfe3e7; 
 
+--color-border: #d1d5db;
+--nav-toggle-bg-hover: rgba(0,0,0,0.06);
+--nav-toggle-bg-active: rgba(0,0,0,0.12);
 
 --gradient-accent: linear-gradient(90deg, #1b178c 0%, #5853d6 50%, #a5a9e0 100%);
 
@@ -102,7 +105,7 @@
 html[data-theme="dark"] {
   /* Reuse your dark tokens here (example based on what you’ve used before) */
   --color-bg-body: #0e0e0e;
-  --color-bg-header: #rgba(22, 22, 22, 1);
+  --color-bg-header: rgba(22, 22, 22, 0.6);
   --color-bg-footer: #161616;
   --color-surface-1: #161616;
   --color-surface-2: #1c1c1c;
@@ -115,6 +118,9 @@ html[data-theme="dark"] {
   --color-accent: #4da3ff;
   --color-link: var(--color-text);
   --color-link-hover: #ffffff;
+
+  --nav-toggle-bg-hover: rgba(255,255,255,0.08);
+  --nav-toggle-bg-active: rgba(255,255,255,0.16);
 
   --shadow-1: 0 1px 2px rgba(0,0,0,0.5), 0 1px 1px rgba(0,0,0,0.35);
   --shadow-2: 0 10px 25px rgba(0,0,0,0.45), 0 2px 6px rgba(0,0,0,0.4);
@@ -211,6 +217,7 @@ nav a, .theme-toggle {
    ========================================================================== */
 header {
   background: var(--color-bg-header);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   border-bottom: 1px solid var(--color-border);
   border-radius: 0;                            /* not rounded */
@@ -246,6 +253,8 @@ nav h1 a {
   transition: color var(--dur-2) var(--ease-out);
 }
 
+
+
 #home-link:hover { color: var(--color-accent); }
 
 .links {
@@ -259,6 +268,55 @@ nav h1 a {
   position: relative;
   transition: color var(--dur-2) var(--ease-out);
 }
+/* Default: hidden on desktop */
+.nav-toggle {
+  display: none;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+  line-height: 1;
+  border-radius: 20%; /* for circular shadow */
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow 0.3s ease;
+}
+
+/* Show only on small screens */
+@media (max-width: 720px) {
+  .nav-toggle { display: flex; }
+
+  .links {
+    display: none;
+    position: absolute;
+    top: 100%; 
+    right: var(--container-pad-x);
+    flex-direction: column;
+    gap: var(--space-3);
+
+    background: rgba(245, 245, 245, 0.95);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    box-shadow: var(--shadow-2);
+    z-index: 1000;
+  }
+
+  html[data-theme="dark"] .links {
+    background: rgba(22, 22, 22, 0.95);
+  }
+
+  .links.is-open { display: flex; }
+}
+
+.nav-toggle { transition: background-color var(--dur-2) var(--ease-out); }
+.nav-toggle:hover { background: var(--nav-toggle-bg-hover); }
+.nav-toggle.is-active, .nav-toggle[aria-expanded="true"] { background: var(--nav-toggle-bg-active); }
+
+
 
 /* Underline grow-on-hover */
 .links a::after {
@@ -410,6 +468,7 @@ footer p {
   font: inherit;
   line-height: 1;
   cursor: pointer;
+  justify-content: center;
   transition: color var(--dur-2) var(--ease-out), background var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
 }
 

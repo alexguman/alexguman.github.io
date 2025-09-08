@@ -1,3 +1,27 @@
+function setupNavToggle() {
+  const nav = document.querySelector("header > nav");
+  if (!nav) return;
+
+  const btn = nav.querySelector(".nav-toggle");
+  const links = nav.querySelector(".links");
+  if (!btn || !links) return;
+
+  btn.addEventListener("click", () => {
+    const open = links.classList.toggle("is-open");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    btn.classList.toggle("is-active", open);
+  });
+
+  // Close when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!links.classList.contains("is-open")) return;
+    if (e.target.closest(".links") || e.target.closest(".nav-toggle")) return;
+    links.classList.remove("is-open");
+    btn.setAttribute("aria-expanded", "false");
+    btn.classList.remove("is-active");
+  });
+}
+
 // Dark mode toggle
 function setupDarkModeToggle() {
   const ROOT = document.documentElement;
@@ -7,6 +31,8 @@ function setupDarkModeToggle() {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored === "dark") {
     ROOT.setAttribute("data-theme", "dark");
+  } else if (stored === "light") {
+    ROOT.setAttribute("data-theme", "light");
   }
 
   const btn = document.querySelector(".theme-toggle");
@@ -24,7 +50,7 @@ function setupDarkModeToggle() {
   btn.addEventListener("click", () => {
     const isDark = ROOT.getAttribute("data-theme") === "dark";
     if (isDark) {
-      ROOT.removeAttribute("data-theme"); // back to light
+      ROOT.setAttribute("data-theme", "light"); // force light instead of removing
       localStorage.setItem(STORAGE_KEY, "light");
     } else {
       ROOT.setAttribute("data-theme", "dark");
@@ -93,4 +119,5 @@ document.addEventListener("DOMContentLoaded", () => {
   setupHomeLinkScroll();
   setupContactLinkScroll();
   setupDarkModeToggle();
+  setupNavToggle();
 });
