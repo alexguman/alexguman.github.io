@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Heatmap Glow Cursor</title>
+  <meta name="color-scheme" content="dark light" />
+  <style>
+    :root {
+      --cooling: 0.04;     /* 0..1, higher = faster fade */
+      --radius: 25;       /* px radius of each glow stamp */
+      --spawn-gap: 10;     /* px mouse travel before a new stamp */
+      --bg: #0b1020;       /* page background */
+      --panel: rgba(255,255,255,0.06);
+      --panel-border: rgba(255,255,255,0.14);
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: #e6e6ea;
+      font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    /* Heat layer sits above the background but below content */
+    #heatLayer {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none; /* never block clicks/selection */
+      display: block;
+    }
+
+    /* Demo content panel */
+    .content {
+      position: relative; z-index: 1;
+      max-width: 62ch;
+      margin: 10vh auto;
+      padding: 2rem 2.25rem;
+      background: var(--panel);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+    h1 { margin: 0 0 0.5rem; font-weight: 700; letter-spacing: 0.3px; }
+    p  { margin: 0.5rem 0 0; color: #cfd3de; }
+    .note { opacity: 0.7; font-size: 0.925rem; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <canvas id="heatLayer" aria-hidden="true"></canvas>
+
+  <main class="content">
+    <h1>Heatmap Glow</h1>
+    <p>Move your cursor around. Heat intensifies with repeated passes and cools slowly.</p>
+    <p class="note">Respects “Reduce Motion”. Pauses on background tabs.</p>
+  </main>
+
+  <script>
+    (() => {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduceMotion) return; // Respect user preference; no effect.
+
+      const canvas = document.getElementById('heatLayer');
+      const ctx = canvas.getContext('2d');
+
+      // DPR-aware sizing for crisp rendering
+      let dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2)); // cap for perf
+      let W = 0, H = 0;
+
+      function resize() {
+        const { innerWidth: w, innerHeight: h } = window;
+        dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+        canvas.width  = Math.floor(w * dpr);
+        canvas.height = Math.floor(h * dpr);
+        canvas.style.width = w + 'px';
+        canvas.style.height = h + 'px';
+        W = canvas.width;
+        H = canvas.height;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // draw in CSS pixels
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      // Parameters
+      const RADIUS = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--radius')) || 120;
+      const GAP    = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--spawn-gap')) || 10;
+      const COOL   = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cooling')) || 0.04;
+
+      // Input -> list of stamps to draw
+      let lastX = null, lastY = null;
+      const stamps = [];
+
+      function queueStamp(x, y, intensity = 1, extraRadius = 0) {
+        stamps.push({ x, y, intensity, extraRadius });
+      }
+
+      function onMove(ev) {
+        const x = ev.clientX;
+        const y = ev.clientY;
+
+        if (lastX == null) {
+          lastX = x; lastY = y;
+          queueStamp(x, y, 1);
+          return;
+        }
+        const dx = x - lastX, dy = y - lastY;
+        const dist = Math.hypot(dx, dy);
+
+        // Spawn stamps along the path so fast moves don't leave gaps
+        if (dist >= GAP) {
+          const steps = Math.ceil(dist / GAP);
+          for (let i = 1; i <= steps; i++) {
+            const ix = lastX + (dx * i / steps);
+            const iy = lastY + (dy * i / steps);
+            // Speed-weighted intensity / radius (subtle)
+            const speedFactor = Math.min(1.6, 0.6 + dist / 60);
+            queueStamp(ix, iy, speedFactor, (speedFactor - 1) * 20);
+          }
+          lastX = x; lastY = y;
+        }
+      }
+
+      window.addEventListener('pointermove', onMove, { passive: true });
+      window.addEventListener('pointerdown', e => queueStamp(e.clientX, e.clientY, 1.5, 30), { passive: true });
+
+      // Pause effect when not visible to save work
+      let running = true;
+      document.addEventListener('visibilitychange', () => {
+        running = document.visibilityState === 'visible';
+      });
+      window.addEventListener('blur', () => running = false);
+      window.addEventListener('focus', () => running = true);
+
+      // Draw a single “heat” radial with additive blending
+      function drawHeat(x, y, radius, intensity) {
+        ctx.globalCompositeOperation = 'lighter';
+
+        const g = ctx.createRadialGradient(x, y, 0, x, y, radius);
+        // Inner white-hot core
+        g.addColorStop(0.00, `rgba(255,255,255,${0.85 * intensity})`);
+        g.addColorStop(0.12, `rgba(255,228,128,${0.80 * intensity})`); // warm yellow
+        g.addColorStop(0.28, `rgba(255,120,0,${0.55 * intensity})`);   // orange
+        g.addColorStop(0.55, `rgba(64,160,255,${0.35 * intensity})`);  // cool halo
+        g.addColorStop(1.00, `rgba(0,0,0,0)`);                         // fade out
+
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function coolDown() {
+        // Gradually reduce existing alpha to make the glow fade
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.fillStyle = `rgba(0,0,0,${COOL})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      // Main loop
+      let rafId = null;
+      function tick() {
+        if (running) {
+          coolDown();
+
+          // Draw up to N stamps per frame to avoid backlog burst
+          const maxPerFrame = 32;
+          for (let i = 0; i < maxPerFrame && stamps.length; i++) {
+            const s = stamps.shift();
+            drawHeat(s.x, s.y, (RADIUS + (s.extraRadius || 0)), s.intensity || 1);
+          }
+
+          // Return to default for any future draws
+          ctx.globalCompositeOperation = 'source-over';
+        }
+        rafId = requestAnimationFrame(tick);
+      }
+      tick();
+
+      // Cleanup on unload
+      window.addEventListener('beforeunload', () => cancelAnimationFrame(rafId));
+    })();
+  </script>
+</body>
+</html>

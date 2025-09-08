@@ -1,0 +1,490 @@
+/* ==========================================================================
+   DESIGN TOKENS (Edit these to theme the whole site)
+   ========================================================================== */
+:root {
+/* === COLOR PALETTE: Deep Koamaru & Geyser === */
+--color-bg-body: #dfe3e7;      /* geyser (main background) */
+--color-bg-header: rgba(214, 218, 223, 0.6);    /* slightly darker tint of geyser for header */
+--color-bg-footer: #051a2a;    /* slightly lighter tint for footer */
+--color-surface-1: #ffffff;    /* clean white for cards/sections */
+--color-surface-2: #f4f6f8;    /* subtle light gray for alternating surfaces */
+
+--color-text: #141254;    /* indigo ink for headings/primary text */
+--color-text-2: #1f1a63;  /* slightly lighter indigo for body copy */
+--color-text-3: #4b487a;  /* muted indigo-gray for secondary text */
+--color-text-4: #dfe3e7;
+
+--color-accent: #1b178c;       /* indigo ink highlight */
+--color-accent-2: #2f2aa8;     /* brighter indigo secondary */
+--color-accent-muted: #94a3c7; /* soft lavender-indigo for nav hover/underline */
+
+--color-link: var(--color-text);
+--color-link-hover: #dfe3e7; 
+
+
+--gradient-accent: linear-gradient(90deg, #1b178c 0%, #5853d6 50%, #a5a9e0 100%);
+
+
+  /* --- Spacing scale (4px baseline) --- */
+  --space-1: 0.25rem; /* 4px  */
+  --space-2: 0.5rem;  /* 8px  */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem;    /* 16px */
+  --space-6: 1.5rem;  /* 24px */
+  --space-8: 2rem;    /* 32px */
+  --space-12: 3rem;   /* 48px */
+  --space-16: 4rem;   /* 64px */
+
+  /* --- Typography --- */
+  --font-sans: "Jost", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               Helvetica, Arial, sans-serif;
+
+  /* Font sizes (responsive-friendly tokens) */
+  --text-xs: 0.8125rem; /* 13px */
+  --text-sm: 0.9375rem; /* 15px */
+  --text-base: 1rem;    /* 16px */
+  --text-md: 1.125rem;  /* 18px */
+  --text-lg: 1.5rem;    /* 24px */
+  --text-xl: 2rem;      /* 32px */
+
+  /* Line heights */
+  --lh-tight: 1.25;
+  --lh-body: 1.6;
+  --lh-loose: 1.8;
+
+  /* Weights */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* --- Layout constraints --- */
+  --max-width: 900px;
+  --container-pad-x: var(--space-8);
+  --container-pad-y: var(--space-8);
+
+  /* --- Radius --- */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 9999px;
+
+  /* --- Shadows --- */
+  --shadow-1: 0 1px 2px rgba(0,0,0,0.06), 0 1px 1px rgba(0,0,0,0.03);
+  --shadow-2: 0 10px 25px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.06);
+
+  /* --- Motion / Easing --- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-1: 150ms;
+  --dur-2: 300ms;
+}
+
+/* Dark theme (auto if user prefers dark) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0e0e0e;
+    --color-surface: #161616;
+    --color-text: #f5f5f5;
+    --color-text-2: #cfcfcf;
+    --color-text-3: #aaaaaa;
+    --color-border: #2a2a2a;
+
+    --color-accent: #4da3ff;
+    --color-accent-contrast: #06121f;
+
+    --color-link: var(--color-text);
+    --color-link-hover: #ffffff;
+
+    --shadow-1: 0 1px 2px rgba(0,0,0,0.5), 0 1px 1px rgba(0,0,0,0.35);
+    --shadow-2: 0 10px 25px rgba(0,0,0,0.45), 0 2px 6px rgba(0,0,0,0.4);
+  }
+}
+html[data-theme="dark"] {
+  /* Reuse your dark tokens here (example based on what you’ve used before) */
+  --color-bg-body: #0e0e0e;
+  --color-bg-header: #rgba(22, 22, 22, 1);
+  --color-bg-footer: #161616;
+  --color-surface-1: #161616;
+  --color-surface-2: #1c1c1c;
+
+  --color-text: #f5f5f5;
+  --color-text-2: #cfcfcf;
+  --color-text-3: #aaaaaa;
+  --color-border: #2a2a2a;
+
+  --color-accent: #4da3ff;
+  --color-link: var(--color-text);
+  --color-link-hover: #ffffff;
+
+  --shadow-1: 0 1px 2px rgba(0,0,0,0.5), 0 1px 1px rgba(0,0,0,0.35);
+  --shadow-2: 0 10px 25px rgba(0,0,0,0.45), 0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-1: 0ms;
+    --dur-2: 0ms;
+  }
+}
+
+/* ==========================================================================
+   BASE / RESET
+   ========================================================================== */
+* { box-sizing: border-box; }
+*::before, *::after { box-sizing: inherit; }
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  color: var(--color-text);
+  background: radial-gradient(1200px 800px at 10% -10%, color-mix(in srgb, var(--color-accent) 10%, transparent), transparent 40%),
+              var(--color-bg-body);
+  font-family: var(--font-sans);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  max-width: var(--max-width);
+  padding: 0 var(--container-pad-x);
+  margin-inline: auto;
+}
+
+
+img, video, canvas, svg { display: block; max-width: 100%; }
+ul, ol { padding-left: 0; margin: 0; list-style: none; }
+
+a {
+  color: var(--color-link);
+  text-decoration: none;
+  transition: color var(--dur-2) var(--ease-out);
+}
+
+
+/* Accessible focus styles */
+:where(a, button, [tabindex], input, textarea, select):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+
+/* ==========================================================================
+   TYPOGRAPHY
+   ========================================================================== */
+/*h1, h2, h3 { line-height: var(--lh-tight); font-weight: var(--weight-semibold); color: var(--color-text); }
+h1 { font-size: clamp(1.75rem, 2.5vw + 1rem, var(--text-xl)); }
+h2 { font-size: var(--text-lg); margin-bottom: var(--space-4); }
+p  { font-size: var(--text-md); color: var(--color-text-2); }*/
+
+/* Headings */
+h1, h2 {
+  font-family: var(--font-sans);
+  font-weight: 600;             /* adjust to 700 for more impact */
+  letter-spacing: -0.01em;      /* tighten slightly */
+}
+
+/* Body text */
+body, p, li {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  letter-spacing: 0.002em;      /* tiny spacing for readability */
+  line-height: var(--lh-body);
+}
+
+/* Nav links */
+nav a, .theme-toggle {
+  display: inline-flex;      /* same flex context */
+  align-items: center;       /* vertical centering */
+  line-height: 1;            /* kill font baseline quirks */
+  vertical-align: middle;    /* extra guard for Safari */
+  font-weight: 500;
+}
+
+
+/* ==========================================================================
+   HEADER / NAV
+   ========================================================================== */
+header {
+  background: var(--color-bg-header);
+  backdrop-filter: blur(4px);
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;                            /* not rounded */
+  margin-left: calc(50% - 50vw);               /* full-bleed left */
+  margin-right: calc(50% - 50vw);              /* full-bleed right */
+  padding: var(--space-4) 0;                   /* vertical padding only */
+  position: sticky; 
+  top: 0; 
+  z-index: 100;
+}
+
+header > nav {
+  max-width: var(--max-width);
+  margin: 0 auto;                        /* center content */
+  padding: 0 var(--container-pad-x);     /* restore side padding */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+nav h1 {
+  font-weight: var(--weight-semibold);
+}
+
+nav h1 a {
+  color: var(--color-text);
+  transition: color var(--dur-2) var(--ease-out);
+}
+
+#home-link:hover { color: var(--color-accent); }
+
+.links {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.links a {
+  font-size: var(--text-base);
+  color: var(--color-text-3);
+  position: relative;
+  transition: color var(--dur-2) var(--ease-out);
+}
+
+/* Underline grow-on-hover */
+.links a::after {
+  content: "";
+  position: absolute;
+  left: 50%; /* Start from the center */
+  bottom: -4px; /* Position below the text */
+  width: 0%; /* Start with no width */
+  height: 2px;
+  background: var(--color-accent-muted); /* Underline color */
+  transform: translateX(-50%); /* Center the underline */
+  transform-origin: center; /* Expand outward from the center */
+  transition: width var(--dur-2) var(--ease-out);
+}
+
+.links a:hover {
+  color: var(--color-link-hover);
+}
+.links a:hover::after { width: 100%; }
+
+
+/* ==========================================================================
+   MAIN CONTENT
+   ========================================================================== */
+main > p {
+  margin-bottom: var(--space-8);
+  max-width: 70ch;
+  color: var(--color-text-2);
+}
+
+section {
+  margin-bottom: var(--space-12);
+}
+
+section p,
+section li {
+  font-size: var(--text-base);
+  color: var(--color-text-2);
+}
+
+section ul li + li { margin-top: var(--space-2); }
+
+/* Optional “card-like” surface for sections (easy to toggle on/off) */
+/*
+section {
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+  padding: var(--space-8);
+}
+*/
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+footer {
+  background: var(--color-bg-footer);
+  border-top: 1px solid var(--color-border);
+  margin-top: var(--space-12);
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding: var(--space-6) var(--container-pad-x);
+  font-size: var(--text-sm);
+  color: var(--color-text-4);
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4); /* consistent spacing between all blocks */
+}
+
+footer a {
+  position: relative; /* Required for the ::after pseudo-element */
+  color: var(--color-text-4);
+  text-decoration: none;
+  margin: 0 var(--space-3);
+  transition: color var(--dur-2) var(--ease-out), text-shadow var(--dur-2) var(--ease-out);
+}
+footer a:hover {
+  color: var(--color-text-4);
+  text-shadow: 0 0 6px var(--color-text-4);
+}
+footer a::after {
+  content: "";
+  position: absolute;
+  left: 50%; /* Start underline from the center */
+  bottom: -3px; /* Position below the text */
+  width: 0%; /* Start with no width */
+  height: 2px;
+  background: var(--color-accent-muted); /* Underline color */
+  transform: translateX(-50%); /* Center the underline */
+  transform-origin: center; /* Expand outward from the center */
+  transition: width var(--dur-2) var(--ease-out); /* Smooth underline animation */
+}
+
+footer a:hover::after {
+  width: 100%; /* Expand underline to full width */
+}
+
+footer p {
+  margin: 0; /* remove default paragraph spacing */
+  line-height: var(--lh-body);
+}
+
+
+
+/* ==========================================================================
+   COMPONENTS
+   ========================================================================== */
+
+/* Rainbow Hover Effect */
+
+.rainbow-hover { --step: 22ms; }
+
+.rainbow-hover span {
+  color: currentColor;
+  transition: color 180ms linear;
+  transition-delay: calc(var(--i) * var(--step));
+  
+  /* Safari performance hints */
+  will-change: color, transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.rainbow-hover:hover span {
+  color: hsl(
+    calc(100 + var(--i) * 8),
+    65%,
+    calc(30% + var(--i) * 1%)
+  );
+  transition-delay: calc(var(--i) * var(--step));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rainbow-hover span { transition: none; }
+}
+
+
+/* Dark Mode: */
+.theme-toggle {
+  appearance: none;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-2);
+  border-radius: var(--radius-pill);
+  padding: var(--space-2) var(--space-3);
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+  transition: color var(--dur-2) var(--ease-out), background var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
+}
+
+.theme-toggle::before { 
+  content: "☾"; 
+  display: inline-block; 
+  color: inherit; 
+}
+html[data-theme="dark"] .theme-toggle::before { 
+  content: "☀"; 
+  color: var(--color-link-hover); 
+}
+
+.theme-toggle:hover { 
+  background: var(--color-surface-2); 
+}
+
+html[data-theme="light"] .theme-toggle:hover::before {
+  color: #111111; 
+}
+html[data-theme="dark"] .theme-toggle:hover::before {
+  color: var(--color-link-hover);
+}
+
+.theme-toggle:focus-visible { 
+  outline: 2px solid var(--color-accent); 
+  outline-offset: 2px; 
+  border-color: var(--color-accent); 
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle { transition: none; }
+}
+
+/* Next Effect: */
+
+/* ==========================================================================
+   UTILITIES (handy, minimal set — extend later as needed)
+   ========================================================================== */
+.u-maxw-ch { max-width: 70ch; }
+.u-center   { margin-inline: auto; }
+.u-muted    { color: var(--color-text-3); }
+.u-surface  {
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+}
+
+/* Example button style if you add buttons later (kept generic) */
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--gradient-accent, var(--color-accent));
+  color: var(--color-accent-contrast);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-1);
+  font-weight: var(--weight-medium);
+  transition: transform var(--dur-1) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+}
+.button:hover { transform: translateY(-1px); box-shadow: var(--shadow-2); }
+.button:active { transform: translateY(0); }
+
+/* ==========================================================================
+   PRINT (keeps things readable if you print a page)
+   ========================================================================== */
+@media print {
+  body {
+    background: #fff !important;
+    color: #000;
+    box-shadow: none;
+  }
+  a { color: #000; text-decoration: underline; }
+  .links::after, .links a::after { display: none !important; }
+}

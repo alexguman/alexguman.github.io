@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Proximity Heat Buttons — Persistent</title>
+  <meta name="color-scheme" content="dark light" />
+  <style>
+    :root{
+      --bg: #0b1020;
+      --panel: rgba(255,255,255,0.06);
+      --panel-border: rgba(255,255,255,0.14);
+      --radius: 140;           /* px distance where heat → 0 */
+      --cooling: 0.06;         /* per-frame decay */
+      --max-scale: 1.06;       /* peak scale when heat = 1 */
+      --glow: 60px;            /* glow blur base */
+      --brand: 217 91% 60%;    /* blue */
+      --warm: 28 100% 62%;     /* orange */
+    }
+
+    @media (prefers-color-scheme: light){
+      :root{ --bg:#f7f7fb; --panel: rgba(0,0,0,0.025); --panel-border: rgba(0,0,0,0.08); }
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color: #e6e6ea;
+    }
+
+    .wrap {
+      max-width: 900px;
+      margin: 8vh auto;
+      padding: 2rem;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 18px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+
+    h1{ margin:0 0 0.25rem; letter-spacing:.2px; }
+    p { margin:.25rem 0 1.5rem; color:#cfd3de }
+    @media (prefers-color-scheme: light){ p{ color:#333c4a } }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 1rem;
+    }
+    @media (max-width: 640px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    button.prox {
+      --heat: 0; /* dynamic 0..1 */
+      position: relative;
+      isolation: isolate;
+      width: 100%;
+      padding: 1rem 1.1rem;
+      border-radius: 14px;
+      border: 1px solid color-mix(in oklab, oklch(60% 0.04 250) 20%, transparent);
+      background: linear-gradient(
+        180deg,
+        color-mix(in oklab, #ffffff 6%, transparent),
+        color-mix(in oklab, #000000 12%, transparent)
+      );
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: transform 120ms ease, border-color 120ms ease, background-color 120ms ease;
+      outline: none;
+
+      transform: scale(calc(1 + (var(--heat) * (var(--max-scale) - 1))));
+      border-color: hsl(
+        calc((1 - var(--heat)) * 250 + var(--heat) * 28)
+        calc( max(35%, 70% * var(--heat)) )
+        calc( 55% + 10% * var(--heat) )
+      );
+      font-weight: calc(500 + 200 * var(--heat));
+    }
+
+    button.prox::before{
+      content:"";
+      position:absolute; inset:-2px;
+      z-index:-1;
+      border-radius: inherit;
+      filter: blur(calc((var(--glow)) * (0.25 + var(--heat))));
+      opacity: calc(0.10 + 0.60 * var(--heat));
+      background:
+        radial-gradient(120% 120% at 50% 30%,
+          hsl(var(--brand) / 0.95) 0%,
+          hsl(var(--warm) / 0.65) 45%,
+          transparent 70%);
+      transition: opacity 120ms ease;
+      pointer-events: none;
+    }
+
+    .meter {
+      position:absolute;
+      right: .85rem;
+      top: .85rem;
+      padding: .25rem .5rem;
+      border-radius: 999px;
+      font-size: .75rem;
+      color: #0b1020;
+      background: color-mix(in oklab, white 75%, hsl(var(--brand)) 25%);
+      opacity: calc(0.2 + 0.8 * var(--heat));
+      transform: scale(calc(0.9 + 0.1 * (1 + var(--heat))));
+      transition: opacity 120ms ease, transform 120ms ease;
+    }
+
+    button.prox:focus-visible{
+      outline: 2px solid hsl(var(--brand));
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      button.prox{ transition: border-color 120ms ease, background-color 120ms ease; transform:none !important; }
+      button.prox::before{ filter:none !important; }
+      .meter{ transition:none; transform:none; }
+    }
+
+    .label { display:block; font-size:1.05rem; }
+    .sub   { display:block; font-size:.9rem; opacity:.8; margin-top:.25rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>“Getting Warmer” Buttons (Persistent)</h1>
+    <p>Buttons stay warm while your cursor idles nearby. Move away and they cool smoothly.</p>
+
+    <div class="grid" id="buttonGrid">
+      <button class="prox" aria-describedby="a-sub">
+        <span class="label">Sign up</span>
+        <span class="sub" id="a-sub">Create your account</span>
+        <span class="meter" aria-hidden="true">warmer</span>
+      </button>
+      <button class="prox" aria-describedby="b-sub">
+        <span class="label">Download</span>
+        <span class="sub" id="b-sub">Get the latest build</span>
+        <span class="meter" aria-hidden="true">warmer</span>
+      </button>
+      <button class="prox" aria-describedby="c-sub">
+        <span class="label">Learn more</span>
+        <span class="sub" id="c-sub">How it works</span>
+        <span class="meter" aria-hidden="true">warmer</span>
+      </button>
+      <button class="prox" aria-describedby="d-sub">
+        <span class="label">Contact sales</span>
+        <span class="sub" id="d-sub">We’ll get in touch</span>
+        <span class="meter" aria-hidden="true">warmer</span>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const buttons = Array.from(document.querySelectorAll('button.prox'));
+      const RADIUS = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--radius')) || 140;
+      const COOL   = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cooling')) || 0.06;
+
+      // Per-button heat state
+      const state = new Map(buttons.map(b => [b, 0]));
+
+      // Last known pointer position + whether the pointer is in the window
+      const pointer = { x: null, y: null, inside: false };
+
+      // Distance from point to rect (0 if inside)
+      function distToRect(px, py, rect){
+        const cx = Math.max(rect.left, Math.min(px, rect.right));
+        const cy = Math.max(rect.top,  Math.min(py, rect.bottom));
+        const dx = px - cx, dy = py - cy;
+        return Math.hypot(dx, dy);
+      }
+
+      // Pointer tracking — update position, but the animation loop runs continuously.
+      window.addEventListener('pointermove', (e) => {
+        pointer.x = e.clientX; pointer.y = e.clientY; pointer.inside = true;
+      }, { passive:true });
+
+      // Treat entering/leaving the window explicitly
+      window.addEventListener('pointerover', (e) => {
+        // Ignore child-to-child transitions; only consider entry from outside
+        if (e.relatedTarget === null) pointer.inside = true;
+      });
+      window.addEventListener('pointerout', (e) => {
+        // If leaving to the OS (relatedTarget null), mark as outside
+        if (e.relatedTarget === null) pointer.inside = false;
+      });
+
+      // Click adds a brief “heat pulse”
+      window.addEventListener('pointerdown', (e) => {
+        const x = e.clientX, y = e.clientY;
+        for (const b of buttons){
+          const rect = b.getBoundingClientRect();
+          const d = distToRect(x, y, rect);
+          if (d <= RADIUS * 1.25){
+            state.set(b, Math.min(1, (state.get(b) || 0) + 0.35));
+          }
+        }
+      }, { passive:true });
+
+      // Main loop — always running so proximity persists while idle
+      function tick(){
+        // Decay a little
+        for (const [b, heat] of state){
+          state.set(b, Math.max(0, heat - COOL));
+        }
+
+        // If the pointer is inside, recompute proximity every frame from last known position
+        if (pointer.inside && pointer.x != null){
+          const { x, y } = pointer;
+          for (const b of buttons){
+            const rect = b.getBoundingClientRect();
+            const d = distToRect(x, y, rect);
+            const proximity = Math.max(0, 1 - (d / RADIUS));
+            const target = Math.pow(proximity, 1.75);
+            const current = state.get(b) || 0;
+            const warmed = current + (target - current) * 0.35; // smooth approach
+            state.set(b, Math.min(1, Math.max(0, warmed)));
+          }
+        }
+
+        // Apply CSS vars + update meter labels
+        for (const [b, heat] of state){
+          b.style.setProperty('--heat', heat.toFixed(4));
+          const chip = b.querySelector('.meter');
+          if (chip){
+            if (reduceMotion){
+              chip.style.opacity = (0.2 + 0.8 * heat).toFixed(3);
+            }
+            chip.textContent =
+              heat > 0.85 ? 'hot!' :
+              heat > 0.55 ? 'warmer' :
+              heat > 0.25 ? 'warm' : 'cool';
+          }
+        }
+
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
+</html>
