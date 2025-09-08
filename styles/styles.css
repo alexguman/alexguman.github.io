@@ -81,6 +81,32 @@
   --dur-1: 150ms;
   --dur-2: 300ms;
 }
+/* Light mode explicit overrides */
+html[data-theme="light"] {
+--color-bg-body: #dfe3e7;      /* geyser (main background) */
+--color-bg-header: rgba(214, 218, 223, 0.6);    /* slightly darker tint of geyser for header */
+--color-bg-footer: #051a2a;    /* slightly lighter tint for footer */
+--color-surface-1: #ffffff;    /* clean white for cards/sections */
+--color-surface-2: #f4f6f8;    /* subtle light gray for alternating surfaces */
+
+--color-text: #141254;    /* indigo ink for headings/primary text */
+--color-text-2: #1f1a63;  /* slightly lighter indigo for body copy */
+--color-text-3: #4b487a;  /* muted indigo-gray for secondary text */
+--color-text-4: #dfe3e7;
+
+--color-accent: #1b178c;       /* indigo ink highlight */
+--color-accent-2: #2f2aa8;     /* brighter indigo secondary */
+--color-accent-muted: #94a3c7; /* soft lavender-indigo for nav hover/underline */
+
+--color-link: var(--color-text);
+--color-link-hover: #dfe3e7; 
+
+--color-border: #d1d5db;
+--nav-toggle-bg-hover: rgba(0,0,0,0.06);
+--nav-toggle-bg-active: rgba(0,0,0,0.12);
+
+--gradient-accent: linear-gradient(90deg, #1b178c 0%, #5853d6 50%, #a5a9e0 100%);
+}
 
 /* Dark theme (auto if user prefers dark) */
 @media (prefers-color-scheme: dark) {
