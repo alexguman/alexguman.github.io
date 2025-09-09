@@ -1,70 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="/styles/styles.css">
-        <script src="/scripts/scripts.js" defer></script>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    </head>
-    <body>
-        <header>
-            <nav>
-                <h1><a class="rainbow-hover" id="home-link" href="/">I am Alex Guman.</a></h1>
-                <div class="links">
-                    <a class="rainbow-hover" href="/writing/">Writing</a>
-                    <a class="rainbow-hover" href="/projects/">Projects</a>
-                    <a class="rainbow-hover" href="/about/">About</a>
-                    <a class="rainbow-hover" href="#contact">Contact</a>
-                    <button class="theme-toggle" aria-label="Toggle dark mode" title="Toggle theme"></button>
-                </div>
-                <button class="nav-toggle" aria-expanded="false" aria-label="Open menu">☰</button>
-            </nav>
-        </header>
-        <main>
-            <p>I’m Alex, an incoming 1L at the University of Chicago Law School. I earned my undergraduate degree in economics from UChicago and subsequently worked in Mizuho’s Structured Credit Group, where I focused on data analysis, business development, and origination for structured debt and equity securities. I now build tools and prototypes at the intersection of law, technology, and design, including a system that uses AI to simulate legal outcomes across different jurisdictions and a decentralized platform for experimenting with digital rights management. This site will serve as a space to organize and share my projects and writing.</p>
-            <section>
-                <h2>Why create a website</h2>
-                <p>I believe there is a lot to be gained from creating compelling user experiences for delivering information. As an aspiring lawyer and entrepreneur, I want to exercise this skill in a way that is personal and interesting to me.</p>
-            </section>
-            <section>
-                <h2>My interests</h2>
-                <ul>
-                    <li>Law</li>
-                    <li>Technology</li>
-                    <li>Business</li>
-                </ul>
-            </section>
-            <section>
-                <h2>What I'm currently working on</h2>
-                <ul>
-                    <li>Making my personal website</li>
-                    <li>GenAI pipeline for social media advertisement made with and for ecommerce in mind</li>
-                    <li>AI search and database applications for academia</li>
-                </ul>
-            </section>
-            <section style="height: 200vh; background: var(--color-surface-2); display: flex; align-items: center; justify-content: center;">
-  <h2 style="color: var(--color-text-2); font-weight: var(--weight-medium);">
-    Placeholder content block — scroll to see header effect
-  </h2>
-</section>
-        </main>
-        <footer id="contact">
-            <div class="footer-inner">
-                <div class="footer-brand">
-                    <p> <a href="/" class="footer-home">Alex Guman</a>© 2025. All rights reserved.</p>
-                </div>
-                <div class="footer-socials">
-                    <a href="https://github.com/alexguman" target="_blank" rel="noopener">GitHub</a>
-                    <a href="https://www.linkedin.com/in/alexguman/" target="_blank" rel="noopener">LinkedIn</a>
-                    <a href="https://twitter.com/yourusername" target="_blank" rel="noopener">X (FKA Twitter)</a>
-                </div>
-                <div>
-                    <p>I wrote this website entirely from scratch using html, css, and javascript. I am the only one who writes & edits this work, so I guess I can't blame anyone else for any mistakes.</p>
-                </div>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/styles.css">
+    <script src="/scripts/scripts.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <h1><a class="rainbow-hover" id="home-link" href="/">Alex Guman</a></h1>
+            <div class="links">
+                <a class="rainbow-hover" href="/writing/">Writing</a>
+                <a class="rainbow-hover" href="/projects/">Projects</a>
+                <a class="rainbow-hover" href="/about/">About</a>
+                <a class="rainbow-hover" href="#contact">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle dark mode" title="Toggle theme"></button>
             </div>
-        </footer>
-    </body>
+            <button class="nav-toggle" aria-expanded="false" aria-label="Open menu">☰</button>
+        </nav>
+    </header>
+    <main id="home-landing">
+  <!-- HERO -->
+  <section class="hero section--fullbleed">
+    <div class="hero__inner">
+
+      <!-- Pick one headline below -->
+      <h1 class="hero__title">Hi, I'm Alex.</h1>
+
+      <p class="hero__subtitle u-maxw-ch">
+  This is my lab notebook: study notes, small experiments, quick reactions, and the occasional deep dive.
+</p>
+
+
+      <div class="cta-row">
+        <a class="button" href="/writing/">Read the latest</a>
+        <a class="button" href="/about/">About me</a>
+      </div>
+
+      <!-- Optional: a tiny “Now” line you can update whenever -->
+      <p class="hero__now u-maxw-ch u-muted">Current Status: Prepping for 1L, collecting reading notes, building little tools.</p>
+    </div>
+  </section>
+</main>
+
+
+    <footer id="contact">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <p>Alex Guman © 2025. All rights reserved.</p>
+            </div>
+            <div class="footer-socials">
+                <a href="https://github.com/alexguman" target="_blank" rel="noopener">GitHub</a>
+                <a href="https://www.linkedin.com/in/alexguman/" target="_blank" rel="noopener">LinkedIn</a>
+                <a href="https://twitter.com/yourusername" target="_blank" rel="noopener">X (FKA Twitter)</a>
+            </div>
+            <div>
+                <p>I alone write & edit any work published here unless otherwise noted.</p>
+                <p>This website was written from scratch using html, css, and javascript. </p>
+            </div>
+        </div>
+    </footer>
+</body>
+
 </html>
